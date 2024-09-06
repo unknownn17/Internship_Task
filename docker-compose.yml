@@ -46,10 +46,10 @@ services:
       - mynetwork
 
   redis:
-    container_name: redis_container17
+    container_name: redis_container178
     image: redis:latest
     ports:
-      - "6378:6379"
+      - "6377:6379"
     volumes:
       - redis-data:/data
     networks:
@@ -57,7 +57,7 @@ services:
 
   mongo:
     image: mongo:latest
-    container_name: mongodb
+    container_name: mongo
     volumes:
       - mongo-data:/data/db
     ports:
