@@ -1,36 +1,42 @@
-name: upload to server
+name: Deploy to Server
 
 on:
   push:
     branches: [ "unknown17" ]
   pull_request:
     branches: [ "unknown17" ]
-    
-env:
-  SERVER_USERNAME: ubuntu
-  SERVER_IP: 3.127.221.197
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
-  build_push_deploy:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: deploy-environment
+    env:
+        SERVER_USERNAME: ubuntu
+        SERVER_IP: 3.127.221.197
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Deploy image to server
-        uses: appleboy/ssh-action@master
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
         with:
-          host: ${{ env.SERVER_IP }}
-          username: ${{ env.SERVER_USERNAME }}
-          key: ${{ env.SSH_PRIVATE_KEY }}
-          script: |
-            if [ ! -d "go/src" ]; then
-              git clone https://github.com/unknownn17/Internship_Task.git go/src
-            fi
-            cd internship
-            git pull origin main
-            docker compose down
-            docker compose up --build -d
-          script_stop: true
-          timeout: 200s
+          # Access private key securely from secrets
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Server
+        run: |  # Multi-line command with proper indentation
+          ssh ${{ env.SERVER_USERNAME }}@${{ env.SERVER_IP }} << EOF
+          cd internship
+
+          # Improved error handling for Git operations
+          if [ -d ".git" ]; then
+            git pull origin unknown17 || echo "Failed to pull updates. Exiting..." && exit 1
+          else
+            git clone -b unknown17 https://github.com/unknownn17/Internship_Task.git . || echo "Failed to clone repository. Exiting..." && exit 1
+          fi
+
+          # Build and start Docker containers
+          docker compose down
+          docker-compose up --build -d  # Use docker-compose (if applicable)
