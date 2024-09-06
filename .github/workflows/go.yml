@@ -2,8 +2,9 @@ name: Build, Push and Deploy Docker Image
 
 on:
   push:
-    branches:
-      - unknown17
+    branches: [ "unknown17" ]
+  pull_request:
+    branches: [ "unknown17" ]
 
 env:
   SERVER_USERNAME: ubuntu
@@ -33,7 +34,6 @@ jobs:
             fi
             
             cd go/src/internship
-            git pull origin unknwon17
             
             sudo docker compose down
             sudo docker compose up --build -d
