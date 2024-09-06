@@ -6,6 +6,9 @@ Bu loyiha foydalanuvchilarga topshiriqlarni boshqarish uchun RESTful API xizmati
 - **PostgreSQL**: SQL injektsiyasidan himoyalanish uchun **sqlc** texnologiyasi ishlatilgan.
 - **MongoDB**: Ma'lumotlarni saqlash uchun ishlatilgan asosiy ma'lumotlar bazasi.
 - **Redis**: Foydalanuvchi ro'yxatdan o'tganda va autentifikatsiya jarayonida cache uchun ishlatiladi.
+- **Docker**: Loyiha container siafatida foydalanildi.
+- **CI/CD** : Serverga Yuklash uchun.
+- **Swagger** :API hujjatlashtirish uchun foydalanilgan.
 
 ## Autentifikatsiya Jarayoni
 
@@ -27,8 +30,6 @@ Bu loyiha foydalanuvchilarga topshiriqlarni boshqarish uchun RESTful API xizmati
 - `GET /tasks` – Foydalanuvchining barcha topshiriqlarini olish
 - `PUT /task` – Topshiriqni yangilash
 - `DELETE /task` – Topshiriqni o'chirish
-
-Qo'shimcha ma'lumotlar uchun [handler.go](./internal/connections/handler.go) va [router.go](./internal/router/router.go) fayllarini ko'rib chiqing.
 
 ## Swagger Hujjatlari
 Loyihada **Swagger** ishlatilgan, API hujjatlarini quyidagi endpoint orqali ko'rishingiz mumkin: 
