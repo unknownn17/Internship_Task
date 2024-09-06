@@ -12,7 +12,7 @@ import (
 // @title           Task Management API
 // @version         2.0
 // @description     This is an API for managing tasks in the system.
-// @host            localhost:8080
+// @host            3.127.221.197:8080
 // @BasePath /
 // @securityDefinitions.apiKey ApiKeyAuth
 // @in header
