@@ -1,31 +1,41 @@
-name: Deploy to Server
+name: Build, Push and Deploy Docker Image
 
 on:
   push:
     branches:
-      - main
+      - unknown17
 
 env:
   SERVER_USERNAME: ubuntu
-  SERVER_IP: 35.159.223.170
+  SERVER_IP: 3.127.221.197
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
-  deploy:
+  build_push_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Deploy to Server
+      - name: Deploy image to server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.SERVER_IP }}
           username: ${{ env.SERVER_USERNAME }}
           key: ${{ env.SSH_PRIVATE_KEY }}
           script: |
-            # Update the script based on the identified issue
-            # For example, if the public key is missing:
-            #   sudo ssh-copy-id -i ~/.ssh/id_rsa ${{ env.SERVER_USERNAME }}@${{ env.SERVER_IP }}
-            # Or if the SSH configuration is incorrect:
-            #   sudo systemctl restart sshd
+            if [ ! -d "go/src" ]; then
+              mkdir -p go/src
+            fi
+            
+            if [ ! -d "go/src/internship" ]; then
+              git clone https://github.com/unknownn17/Internship_Task.git  go/src/internship
+            fi
+            
+            cd go/src/internship
+            git pull origin unknwon17
+            
+            sudo docker compose down
+            sudo docker compose up --build -d
+          script_stop: true
+          timeout: 200s
