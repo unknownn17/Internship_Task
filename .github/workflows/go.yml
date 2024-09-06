@@ -1,9 +1,16 @@
-name: Build, Push and Deploy Docker Image
+name: upload to server
 
 on:
   push:
-    branches:
-      - unknwon17
+    branches: [ "unknown17" ]
+  pull_request:
+    branches: [ "unknown17" ]
+    
+env:
+  SERVER_USERNAME: ubuntu
+  SERVER_IP: 3.127.221.197
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
 jobs:
   build_push_deploy:
     runs-on: ubuntu-latest
@@ -14,14 +21,14 @@ jobs:
       - name: Deploy image to server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USERNAME }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
           script: |
             if [ ! -d "go/src" ]; then
               git clone https://github.com/unknownn17/Internship_Task.git go/src
             fi
-            mkdir internship
+            cd internship
             git pull origin main
             docker compose down
             docker compose up --build -d
