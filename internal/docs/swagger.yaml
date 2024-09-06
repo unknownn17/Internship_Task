@@ -1,0 +1,304 @@
+basePath: /
+definitions:
+  models.GetTaskResponse:
+    properties:
+      created_at:
+        type: string
+      desciption:
+        type: string
+      id:
+        type: integer
+      important:
+        type: boolean
+      status:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.LogIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.Register_User:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.Task:
+    properties:
+      desciption:
+        type: string
+      id:
+        type: integer
+      important:
+        type: boolean
+      status:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Verify_User:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is an API for managing tasks in the system.
+  title: Task Management API
+  version: "2.0"
+paths:
+  /task:
+    delete:
+      description: Delete a task by ID and user ID
+      parameters:
+      - description: Task ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task deleted
+          schema:
+            type: string
+        "500":
+          description: Error message
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a task
+      tags:
+      - Task
+    get:
+      description: Retrieve a task by ID and user ID
+      parameters:
+      - description: Task ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetTaskResponse'
+        "404":
+          description: Task not found
+          schema:
+            type: string
+        "500":
+          description: Error message
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get a specific task
+      tags:
+      - Task
+    post:
+      consumes:
+      - application/json
+      description: Create a task for a user
+      parameters:
+      - description: Create Task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.GetTaskResponse'
+        "500":
+          description: Error message
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new task
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      description: Update task information for a specific task and user
+      parameters:
+      - description: Task ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      - description: Update Task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetTaskResponse'
+        "500":
+          description: Error message
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update a task
+      tags:
+      - Task
+  /tasks:
+    get:
+      description: Retrieve all tasks for a specific user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.GetTaskResponse'
+            type: array
+        "500":
+          description: Error message
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get all tasks for a user
+      tags:
+      - Task
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user with email and password
+      parameters:
+      - description: LogIn User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LogIn'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Login
+          schema:
+            type: string
+        "500":
+          description: Error message
+          schema:
+            type: string
+      summary: Log in a user
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: Register User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Register_User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Register
+          schema:
+            type: string
+        "500":
+          description: Error message
+          schema:
+            type: string
+      summary: Register a new user
+      tags:
+      - User
+  /user/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify user registration with a verification code
+      parameters:
+      - description: Verify User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Verify_User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Verify
+          schema:
+            type: string
+        "500":
+          description: Error message
+          schema:
+            type: string
+      summary: Verify a user account
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
