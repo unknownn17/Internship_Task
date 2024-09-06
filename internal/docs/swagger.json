@@ -6,7 +6,7 @@
         "contact": {},
         "version": "2.0"
     },
-    "host": "localhost:8080",
+    "host": "3.127.221.197:8080",
     "basePath": "/",
     "paths": {
         "/task": {
