@@ -5,38 +5,35 @@ on:
     branches: [ "unknown17" ]
   pull_request:
     branches: [ "unknown17" ]
+env:
+  SERVER_USERNAME: ubuntu
+  SERVER_IP: 35.159.223.170
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: deploy-environment
-    env:
-        SERVER_USERNAME: ubuntu
-        SERVER_IP: 3.127.221.197
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          # Access private key securely from secrets
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+        uses: actions/checkout@v2
 
       - name: Deploy to Server
-        run: |  # Multi-line command with proper indentation
-          ssh ${{ env.SERVER_USERNAME }}@${{ env.SERVER_IP }} << EOF
-          cd internship
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USERNAME }}
+          key: ${{ env.SSH_PRIVATE_KEY }}
+          script: |
+            if [ ! -d "go/src" ]; then
+              mkdir -p go/src
+            fi
 
-          # Improved error handling for Git operations
-          if [ -d ".git" ]; then
-            git pull origin unknown17 || echo "Failed to pull updates. Exiting..." && exit 1
-          else
-            git clone -b unknown17 https://github.com/unknownn17/Internship_Task.git . || echo "Failed to clone repository. Exiting..." && exit 1
-          fi
+            if [ ! -d "go/src/todolist" ]; then
+              git clone https://github.com/unknownn17/Internship_Task.git go/src/todolist
+            fi
 
-          # Build and start Docker containers
-          docker compose down
-          docker-compose up --build -d  # Use docker-compose (if applicable)
+            cd go/src/internship
+            git pull origin main
+
+            sudo docker compose down
+            sudo docker compose up --build -d
