@@ -21,15 +21,12 @@ import (
 func Router() {
 	r := gin.Default()
 
-	// Initialize the handler
 	handler := connections.NewHandler()
 
-	// Public routes (do not require authentication)
 	r.POST("/user/register", handler.Register)
 	r.POST("/user/verify", handler.Verify)
 	r.POST("/user/login", handler.LogIn)
 
-	// Protected routes (require JWT authentication)
 	protected := r.Group("/")
 	protected.Use(jwttoken.JWTMiddleware())
 	{
@@ -40,10 +37,8 @@ func Router() {
 		protected.DELETE("/task", handler.DeleteTask)
 	}
 
-	// Swagger route
 	url := ginSwagger.URL("swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
-	// Start the server
 	r.Run(":8080")
 }
